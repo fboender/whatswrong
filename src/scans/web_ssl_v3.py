@@ -1,4 +1,6 @@
 import httplib
+import ssl
+import socket
 
 __ident__ = 'web::ssl::v3'
 __severity__ = 5
@@ -13,6 +15,7 @@ def scan():
 
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(5)
         ssl_sock = ssl.wrap_socket(s, ca_certs="/etc/ca_certs_file", ssl_version=ssl.PROTOCOL_SSLv3)
         ssl_sock.connect(('127.0.0.1', 443))
         print ssl_sock
