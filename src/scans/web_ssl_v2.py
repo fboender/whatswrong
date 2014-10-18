@@ -1,3 +1,4 @@
+import scanner
 import httplib
 import ssl
 import socket
@@ -11,7 +12,7 @@ __explanation__ = ''
 
 def scan():
     if not hasattr(ssl, 'PROTOCOL_SSLv2'):
-        raise ScanError("SSLv2 Protocol not supported by Python")
+        return (scanner.ERROR, "SSLv2 Protocol not supported by Python")
 
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -19,6 +20,7 @@ def scan():
         ssl_sock = ssl.wrap_socket(s, ca_certs="/etc/ca_certs_file", ssl_version=ssl.PROTOCOL_SSLv2)
         ssl_sock.connect(('127.0.0.1', 443))
         ssl_sock.close()
-    except ssl.SSLError:
-        return None
-    return True
+        return (scanner.FAIL, 'The webserver supports SSLv2, which is broken')
+    except ssl.SSLError, e:
+        return (scanner.NA, "Can't test for SSLv2: %s" % (str(e)))
+    return (scanner.PASS, 'The webserver doesn\'t support SSLv3')

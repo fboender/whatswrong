@@ -21,6 +21,7 @@ import output
 
 usage = "usage: %prog [options] [scan pattern]"
 parser = optparse.OptionParser(usage)
+parser.add_option("-d", "--debug", action="store_true", dest="debug", default=False, help="Show debugging info")
 #parser.add_option("-V", "--verbose", action="store_true", dest="verbose", default=False, help="Log verbose info")
 (options, args) = parser.parse_args()
 
@@ -30,9 +31,9 @@ else:
     scan_pattern = args[0]
 
 try:
-    scanner = scanner.ScannerZip(sys.argv[0])
+    scanner = scanner.ScannerZip(sys.argv[0], debug=options.debug)
 except zipfile.BadZipfile:
-    scanner = scanner.ScannerSrc('scans')
+    scanner = scanner.ScannerSrc('scans', debug=options.debug)
 
 results = scanner.scan(scan_pattern)
 output = output.Output(results)

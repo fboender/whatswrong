@@ -2,13 +2,21 @@ import zipfile
 import os
 import imp
 import re
+import traceback
+
+PASS = 1
+FAIL = 2
+ERROR = 3
+NA = 4
+UNKNOWN = 5
 
 class ScanError(Exception):
     pass
 
 class Scanner:
-    def __init__(self):
+    def __init__(self, debug=False):
         self.scans = {}
+        self.debug = debug
         self.load_scans()
 
     def scan(self, scan_pattern='*'):
@@ -27,30 +35,30 @@ class Scanner:
 
         callback = scan['_module'].scan
         result = {
-            'status': '????'
+            'status': UNKNOWN,
         }
         result.update(scan)
         try:
-            res = callback()
-            if res == True:
-                result['status'] = 'fail'
-            elif res == False:
-                result['status'] = 'pass'
-            else:
-                result['status'] = 'n/a'
+            scan_result, msg = callback()
+            result['status'] = scan_result
+            result['msg'] = msg
         except ScanError, e:
-            result['status'] = 'err'
-            result['fail_msg'] = 'Test failed: %s' % (str(e))
+            result['status'] = ERROR
+            result['msg'] = 'Scan error: %s' % (str(e))
+            if self.debug:
+                traceback.print_exc()
         except Exception, e:
-            result['status'] = 'err '
-            result['fail_msg'] = 'Test failed: %s' % (str(e))
+            result['status'] = ERROR
+            result['msg'] = 'Scan error: %s' % (str(e))
+            if self.debug:
+                traceback.print_exc()
 
         return result
 
 class ScannerSrc(Scanner):
-    def __init__(self, dir):
+    def __init__(self, dir, debug=False):
         self.dir = dir
-        Scanner.__init__(self)
+        Scanner.__init__(self, debug)
 
     def load_scans(self):
         for fname in os.listdir(self.dir):
@@ -62,16 +70,16 @@ class ScannerSrc(Scanner):
                     'severity': scanmodule.__severity__,
                     'impact': scanmodule.__impact__,
                     'cost_to_fix': scanmodule.__cost_to_fix__,
-                    'fail_msg': scanmodule.__fail_msg__,
+                    #'fail_msg': scanmodule.__fail_msg__,
                     'explanation': scanmodule.__explanation__,
                     '_module': scanmodule,
                 }
                 self.scans[scanmodule.__ident__] = scan_info
 
 class ScannerZip(Scanner):
-    def __init__(self, zip):
+    def __init__(self, zip, debug=False):
         self.zip = zip
-        Scanner.__init__(self)
+        Scanner.__init__(self, debug)
 
     def load_scans(self):
         z = zipfile.ZipFile(self.zip, 'r')
@@ -88,7 +96,7 @@ class ScannerZip(Scanner):
                     'severity': scanmodule.__severity__,
                     'impact': scanmodule.__impact__,
                     'cost_to_fix': scanmodule.__cost_to_fix__,
-                    'fail_msg': scanmodule.__fail_msg__,
+                    #'fail_msg': scanmodule.__fail_msg__,
                     'explanation': scanmodule.__explanation__,
                     '_module': scanmodule,
                 }

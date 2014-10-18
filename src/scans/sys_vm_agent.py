@@ -1,3 +1,4 @@
+import scanner
 import re
 import tools
 
@@ -5,7 +6,6 @@ __ident__ = 'sys::vm::agent'
 __severity__ = 2
 __impact__ = 3
 __cost_to_fix__ = 2
-__fail_msg__ = 'No agent running on this virtual machine'
 __explanation__ = ''
 
 def scan():
@@ -24,7 +24,7 @@ def scan():
         if match:
             res_pidof = tools.cmd('pidof %s' % (agent_proc))
             if res_pidof['exitcode'] != 0:
-                return True
+                return (scanner.PASS, 'A vm agent is running')
             else:
-                return False
-    return None
+                return (scanner.PASS, 'No vm agent is running')
+    return (scanner.NA, 'This doesn\'t appear to be a vm')
