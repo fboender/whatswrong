@@ -40,10 +40,10 @@ class Scanner:
                 result['status'] = 'n/a'
         except ScanError, e:
             result['status'] = 'err'
-            result['err_msg'] = 'Test failed: %s' % (str(e))
+            result['fail_msg'] = 'Test failed: %s' % (str(e))
         except Exception, e:
             result['status'] = 'err '
-            result['err_msg'] = 'Test failed: %s' % (str(e))
+            result['fail_msg'] = 'Test failed: %s' % (str(e))
 
         return result
 
