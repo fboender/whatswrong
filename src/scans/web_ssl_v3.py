@@ -1,6 +1,6 @@
 import httplib
 
-__ident__ = 'web::ssl::v2'
+__ident__ = 'web::ssl::v3'
 __severity__ = 5
 __impact__ = 3
 __cost_to_fix__ = 1
@@ -17,6 +17,6 @@ def scan():
         ssl_sock.connect(('127.0.0.1', 443))
         print ssl_sock
         ssl_sock.close()
-    except ssl.SSLError:
+    except ssl.SSLError, e:
         return None
     return True
