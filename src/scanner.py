@@ -39,7 +39,10 @@ class Scanner:
         }
         result.update(scan)
         try:
-            scan_result, msg = callback()
+            res = callback()
+            if not res or len(res) != 2:
+                raise ScanError("Invalid results received from scanner: %s" % (ident))
+            scan_result, msg = res
             result['status'] = scan_result
             result['msg'] = msg
         except ScanError, e:
