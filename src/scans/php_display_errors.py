@@ -24,7 +24,6 @@ def scan():
         file(php_ini, 'r').read() # Test file read access. Throws exception if failed.
         code = "echo(ini_get('display_errors'));"
         res = tools.cmd('php -c %s -r "%s"' % (php_ini, code))
-        print res
         if res['stderr']:
             raise scanner.ScanError('%s: %s' % (php_ini, res['stderr'].replace('\n', '')))
         elif len(res['stdout']) > 6:
