@@ -82,6 +82,32 @@ Adding new scans is simple. Take a look at some of the other scans in the
 
 Put the file in the `scans/` directory, and Whatswrong will automatically detect it.
 
+Scanners should return an iterable (tuple, list) with two elements:
+
+    (STATUS_CODE, MESSAGE)
+
+The following status codes are available:
+
+* **`scanner.FAIL`**: The test failed, meaning something with your system is
+  wrong. For instance, if you're scanning whether ntpd is installed, and it is
+  not installed, you should return `scanner.FAIL`.
+* **`scanner.PASS`**: The test passed, meaning everything is alright for this
+  test. For instance, if you're scanning whether ntpd is installed, and it is
+  installed, you should return `scanner.PASS`.
+* **`scanner.ERROR`**: The scan ran into an error which caused it to not be
+  able to complete the test. It is not indicative that the test passed or
+  failed, but that the test did not run properly. This can be any raised
+  Exception, or the scan can return the status directly if it is able to detect
+  the problem. Applicable situations are not enough permissions, unexpected
+  failures, missing libraries, etc. This status should *not* be returned if the
+  scan *shouldn't* be run (e.g. you're scanning for PHP misconfigurations, but
+  the system doesn't have PHP). In principle, the error should be fixed by the
+  user and the test ran again.
+* **`scanner.NA`**: Not available: The test does not apply to this system, so
+  it was skipped. E.g. when you're scanning for PHP misconfigurations, but the
+  system does not have PHP installed.
+
+
 Things to be aware of when writing new scans:
 
 * Scans may raise an exception, but only *inside* of the `scan()` method.
@@ -95,4 +121,9 @@ Things to be aware of when writing new scans:
   indicating that the library is not available.
 * Scans are ran sequentially. Try to make tests speedy. If you're using sockets
   of any kind, set the socket timeout to a reasonable default (2 seconds).
+* The returned message should match the output status of the test. E.g. if you
+  return scanner.NA, the message should be something like `'Foo not
+  installed'`, or for scanner.ERROR, the error message that was encountered,
+  for scanner.FAIL the reason the test failed (`'A vulnerable version of bash is
+  installed'`) and for scanner.PASS: `'Bash is not vulnerable'`.
 
