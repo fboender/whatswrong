@@ -3,6 +3,7 @@ import os
 import imp
 import re
 import traceback
+import sys
 
 PASS = 1
 FAIL = 2
@@ -66,18 +67,21 @@ class ScannerSrc(Scanner):
     def load_scans(self):
         for fname in os.listdir(self.dir):
             if fname.endswith('.py'):
-                modname = fname.split('.')[0]
-                scanmodule = imp.load_source(modname, os.path.join(self.dir, fname))
-                scan_info = {
-                    'ident': scanmodule.__ident__,
-                    'severity': scanmodule.__severity__,
-                    'impact': scanmodule.__impact__,
-                    'cost_to_fix': scanmodule.__cost_to_fix__,
-                    #'fail_msg': scanmodule.__fail_msg__,
-                    'explanation': scanmodule.__explanation__,
-                    '_module': scanmodule,
-                }
-                self.scans[scanmodule.__ident__] = scan_info
+                try:
+                    modname = fname.split('.')[0]
+                    scanmodule = imp.load_source(modname, os.path.join(self.dir, fname))
+                    scan_info = {
+                        'ident': scanmodule.__ident__,
+                        'severity': scanmodule.__severity__,
+                        'impact': scanmodule.__impact__,
+                        'cost_to_fix': scanmodule.__cost_to_fix__,
+                        #'fail_msg': scanmodule.__fail_msg__,
+                        'explanation': scanmodule.__explanation__,
+                        '_module': scanmodule,
+                    }
+                    self.scans[scanmodule.__ident__] = scan_info
+                except Exception, e:
+                    sys.stderr.write("Couldn't load scan '%s': %s\n" % (fname, e))
 
 class ScannerZip(Scanner):
     def __init__(self, zip, debug=False):
@@ -88,20 +92,23 @@ class ScannerZip(Scanner):
         z = zipfile.ZipFile(self.zip, 'r')
         for fname in z.namelist():
             if fname.startswith('scans/') and fname.endswith('.py'):
-                f = z.open(fname)
-                fc = f.read()
-                modname = fname.split('.')[0]
-                scanmodule = imp.new_module(modname)
-                exec fc in scanmodule.__dict__
+                try:
+                    f = z.open(fname)
+                    fc = f.read()
+                    modname = fname.split('.')[0]
+                    scanmodule = imp.new_module(modname)
+                    exec fc in scanmodule.__dict__
 
-                scan_info = {
-                    'ident': scanmodule.__ident__,
-                    'severity': scanmodule.__severity__,
-                    'impact': scanmodule.__impact__,
-                    'cost_to_fix': scanmodule.__cost_to_fix__,
-                    #'fail_msg': scanmodule.__fail_msg__,
-                    'explanation': scanmodule.__explanation__,
-                    '_module': scanmodule,
-                }
-                self.scans[scanmodule.__ident__] = scan_info
+                    scan_info = {
+                        'ident': scanmodule.__ident__,
+                        'severity': scanmodule.__severity__,
+                        'impact': scanmodule.__impact__,
+                        'cost_to_fix': scanmodule.__cost_to_fix__,
+                        #'fail_msg': scanmodule.__fail_msg__,
+                        'explanation': scanmodule.__explanation__,
+                        '_module': scanmodule,
+                    }
+                    self.scans[scanmodule.__ident__] = scan_info
+                except Exception, e:
+                    sys.stderr.write("Couldn't load scan '%s': %s\n" % (fname, e))
         z.close()
