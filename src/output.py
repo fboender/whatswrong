@@ -25,10 +25,10 @@ output_map = {
 }
 
 
-
 class Output:
-    def __init__(self, results):
+    def __init__(self, results, show):
         self.results = results
+        self.show = show
 
     def console(self):
         end_color = '\033[0m'
@@ -50,6 +50,12 @@ class Output:
         print 'Pass  Severity  Impact  CostToFix  %-*s Msg' % (longest_ident, 'Item')
 
         for result in self.results:
+            status_title = output_map[result['status']]['title']
+
+            # Skip results the user doesn't want to see.
+            if not status_title in self.show:
+                continue
+
             show_cols = cols
             if os.isatty(1):
                 color_start = output_map[result['status']]['color_console']
@@ -61,7 +67,7 @@ class Output:
 
             line = "%s%-4s%s  %s         %s       %s          %-*s %s" % (
                 color_start,
-                output_map[result['status']]['title'],
+                status_title,
                 color_end,
                 result['severity'],
                 result['impact'],
