@@ -7,7 +7,7 @@ __ident__ = 'php::display_errors'
 __severity__ = 5
 __impact__ = 4
 __cost_to_fix__ = 1
-__explanation__ = ''
+__explanation__ = 'PHP is set to display errors.'
 
 def scan():
     php_inis = [
