@@ -5,22 +5,27 @@ output_map = {
     scanner.PASS: {
         'title': 'pass',
         'color_console': '\033[92m',
+        'color_rgb': '#40FF40',
     },
     scanner.FAIL: {
         'title': 'fail',
         'color_console': '\033[91m',
+        'color_rgb': '#FF4040',
     },
     scanner.NA: {
         'title': 'n/a',
         'color_console': '\033[94m',
+        'color_rgb': '#4040FF',
     },
     scanner.ERROR: {
         'title': 'err',
         'color_console': '\033[93m',
+        'color_rgb': '#FFFF40',
     },
     scanner.UNKNOWN: {
         'title': '????',
         'color_console': '',
+        'color_rgb': '',
     }
 }
 
@@ -56,7 +61,7 @@ class Output:
         for result in self.results:
             show_cols = cols
             if os.isatty(1):
-                color_start = output_map[result['status']]['color_console']
+                color_start = result['color_console']
                 color_end = end_color
                 show_cols += 8 # Compensate for ANSI escape seq
             else:
