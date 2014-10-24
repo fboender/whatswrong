@@ -27,8 +27,9 @@ output_map = {
 
 class Output:
     def __init__(self, results, show):
-        self.results = results
         self.show = show
+        self.raw_results = results
+        self.results = map(self._apply_result, filter(self._should_show, results))
 
     def console(self):
         '''
@@ -52,7 +53,7 @@ class Output:
         longest_ident = max([len(s['ident']) for s in self.results])
         print 'Pass  Severity  Impact  CostToFix  %-*s Msg' % (longest_ident, 'Item')
 
-        for result in self._clean_result(filter(self._should_show, self.results)):
+        for result in self.results:
             show_cols = cols
             if os.isatty(1):
                 color_start = output_map[result['status']]['color_console']
@@ -64,7 +65,7 @@ class Output:
 
             line = "%s%-4s%s  %s         %s       %s          %-*s %s" % (
                 color_start,
-                status_title,
+                result['status_title'],
                 color_end,
                 result['severity'],
                 result['impact'],
@@ -114,21 +115,25 @@ class Output:
         status_title = output_map[result['status']]['title']
         return status_title in self.show
 
-    def _clean_result(self, result):
+    def _apply_result(self, result):
         '''
-        Return a cleaned up result for use in JSON and CSV output.
         '''
         clean_result = result.copy()
 
         for k, v in clean_result.items():
-            # Remove entries starting with an underscore
+            # Remove entries starting with an underscore. They are private, and
+            # the JSON export can't handle certain values in the result
+            # (_module).
             if k.startswith('_'):
                 del clean_result[k]
 
             # Remove newlines
             clean_result['explanation'] = ' '.join(clean_result['explanation'].split('\n'))
 
-            # Transforms status to human-readable
-            clean_result['status'] = output_map[result['status']]['title']
+            # Map the output_map values onto the result.
+            clean_result.update(output_map[result['status']])
+
+            # Translate status to human-readable
+            clean_result['status_title'] = output_map[result['status']]['title']
 
         return clean_result
