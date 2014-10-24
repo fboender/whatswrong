@@ -52,8 +52,7 @@ class Output:
         longest_ident = max([len(s['ident']) for s in self.results])
         print 'Pass  Severity  Impact  CostToFix  %-*s Msg' % (longest_ident, 'Item')
 
-        for result in filter(self._should_show, self.results):
-            status_title = output_map[result['status']]['title']
+        for result in self._clean_result(filter(self._should_show, self.results)):
             show_cols = cols
             if os.isatty(1):
                 color_start = output_map[result['status']]['color_console']
@@ -88,6 +87,9 @@ class Output:
         print json.dumps(results)
 
     def csv(self):
+        '''
+        Output results in CSV format.
+        '''
         import StringIO
         import csv
 
@@ -125,5 +127,8 @@ class Output:
 
             # Remove newlines
             clean_result['explanation'] = ' '.join(clean_result['explanation'].split('\n'))
+
+            # Transforms status to human-readable
+            clean_result['status'] = output_map[result['status']]['title']
 
         return clean_result
