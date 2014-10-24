@@ -1,5 +1,6 @@
 import os
 import scanner
+import json
 
 output_map = {
     scanner.PASS: {
@@ -77,6 +78,28 @@ class Output:
                 result['msg'],
             )
             print line[:show_cols]
+
+    def json(self):
+        results = []
+        for result in self.results:
+            clean_result = result.copy()
+            status_title = output_map[clean_result['status']]['title']
+
+            # Skip results the user doesn't want to see.
+            if not status_title in self.show:
+                continue
+
+            for k, v in clean_result.items():
+                # Remove entries starting with an underscore
+                if k.startswith('_'):
+                    del clean_result[k]
+
+                # Remove newlines
+                clean_result['explanation'] = ' '.join(clean_result['explanation'].split('\n'))
+
+                results.append(clean_result)
+
+        print json.dumps(results)
 
     def csv(self):
         print 'csv'
