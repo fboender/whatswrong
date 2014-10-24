@@ -32,6 +32,9 @@ class Output:
         self.show = show
 
     def console(self):
+        '''
+        Output results in console format.
+        '''
         end_color = '\033[0m'
         cols = None
 
@@ -50,13 +53,8 @@ class Output:
         longest_ident = max([len(s['ident']) for s in self.results])
         print 'Pass  Severity  Impact  CostToFix  %-*s Msg' % (longest_ident, 'Item')
 
-        for result in self.results:
+        for result in filter(self._should_show, self.results):
             status_title = output_map[result['status']]['title']
-
-            # Skip results the user doesn't want to see.
-            if not status_title in self.show:
-                continue
-
             show_cols = cols
             if os.isatty(1):
                 color_start = output_map[result['status']]['color_console']
@@ -80,26 +78,38 @@ class Output:
             print line[:show_cols]
 
     def json(self):
+        '''
+        Output results in JSON format.
+        '''
         results = []
-        for result in self.results:
-            clean_result = result.copy()
-            status_title = output_map[clean_result['status']]['title']
-
-            # Skip results the user doesn't want to see.
-            if not status_title in self.show:
-                continue
-
-            for k, v in clean_result.items():
-                # Remove entries starting with an underscore
-                if k.startswith('_'):
-                    del clean_result[k]
-
-                # Remove newlines
-                clean_result['explanation'] = ' '.join(clean_result['explanation'].split('\n'))
-
-                results.append(clean_result)
-
+        for result in filter(self._should_show, self.results):
+            results.append(self._clean_result(result))
         print json.dumps(results)
 
     def csv(self):
         print 'csv'
+
+    def _should_show(self, result):
+        '''
+        Returns True if the user requested to see results of this type. False
+        otherwise
+        '''
+        # Skip results the user doesn't want to see.
+        status_title = output_map[result['status']]['title']
+        return status_title in self.show
+
+    def _clean_result(self, result):
+        '''
+        Return a cleaned up result for use in JSON and CSV output.
+        '''
+        clean_result = result.copy()
+
+        for k, v in clean_result.items():
+            # Remove entries starting with an underscore
+            if k.startswith('_'):
+                del clean_result[k]
+
+            # Remove newlines
+            clean_result['explanation'] = ' '.join(clean_result['explanation'].split('\n'))
+
+        return clean_result
