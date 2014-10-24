@@ -1,6 +1,5 @@
 import os
 import scanner
-import json
 
 output_map = {
     scanner.PASS: {
@@ -81,13 +80,28 @@ class Output:
         '''
         Output results in JSON format.
         '''
+        import json
+
         results = []
         for result in filter(self._should_show, self.results):
             results.append(self._clean_result(result))
         print json.dumps(results)
 
     def csv(self):
-        print 'csv'
+        import StringIO
+        import csv
+
+        fieldnames = ['status', 'impact', 'ident', 'severity', 'cost_to_fix',
+                      'msg', 'explanation']
+        f = StringIO.StringIO()
+        w = csv.DictWriter(f, fieldnames, extrasaction='ignore')
+        w.writerow(dict( (k, k) for k in fieldnames ))
+        for result in filter(self._should_show, self.results):
+            w.writerow(self._clean_result(result))
+
+        f.seek(0)
+        print f.read()
+        f.close()
 
     def _should_show(self, result):
         '''
