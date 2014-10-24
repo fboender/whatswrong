@@ -114,6 +114,46 @@ class Output:
         print f.read()
         f.close()
 
+    def html(self):
+        import textwrap
+        html_header = textwrap.dedent('''
+            <!DOCTYPE html>
+            <html>
+            <head>
+            <meta charset="UTF-8">
+            <title>Scan results</title>
+            <style>
+                * { font-family: sans-serif; font-size: 0.95em; }
+                table { border-collapse: collapse; margin-bottom: 32px; }
+                tr { border-bottom: 1px solid #C0C0C0; }
+                th { text-align: left; vertical-align: top; }
+
+            </style>
+            </head>
+            <body>
+            ''')
+        html_footer = textwrap.dedent('''
+            </body>
+            </html>
+        ''')
+        html_entry = textwrap.dedent('''
+            <table width="550px">
+                <tbody>
+                    <tr><td colspan="2">%(msg)s</td></tr>
+                    <tr><th>Status</th><td><font color="%(color_rgb)s">%(status_title)s</font></td></tr>
+                    <tr><th>Impact</th><td>%(impact)s</td></tr>
+                    <tr><th>ident</th><td>%(ident)s</td></tr>
+                    <tr><th>Severity</th><td>%(severity)s</td></tr>
+                    <tr><th>Cost to fix</th><td>%(cost_to_fix)s</td></tr>
+                    <tr><th>Explanation</th><td>%(explanation)s</td></tr>
+                </tbody>
+            </table>
+        ''')
+        print html_header
+        for result in self.results:
+            print html_entry % result
+        print html_footer
+
     def _should_show(self, result):
         '''
         Returns True if the user requested to see results of this type. False
