@@ -82,9 +82,12 @@ class Output:
         '''
         import json
 
+        inc_fields = ['status_title', 'status', 'impact', 'ident', 'severity',
+                      'cost_to_fix', 'msg', 'explanation']
         results = []
-        for result in filter(self._should_show, self.results):
-            results.append(self._clean_result(result))
+        for result in self.results:
+            filtered_result = dict([ (k, v) for k, v in result.items() if k in inc_fields ])
+            results.append(filtered_result)
         print json.dumps(results)
 
     def csv(self):
@@ -94,13 +97,13 @@ class Output:
         import StringIO
         import csv
 
-        fieldnames = ['status', 'impact', 'ident', 'severity', 'cost_to_fix',
-                      'msg', 'explanation']
+        fieldnames = ['status_title', 'impact', 'ident', 'severity', 'cost_to_fix',
+                      'msg', 'explanation', 'status']
         f = StringIO.StringIO()
         w = csv.DictWriter(f, fieldnames, extrasaction='ignore')
         w.writerow(dict( (k, k) for k in fieldnames ))
-        for result in filter(self._should_show, self.results):
-            w.writerow(self._clean_result(result))
+        for result in self.results:
+            w.writerow(result)
 
         f.seek(0)
         print f.read()
