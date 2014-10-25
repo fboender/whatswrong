@@ -16,8 +16,8 @@ def scan():
 
     results = []
     for tmp_dir in tmp_dirs:
+        path = os.path.join(tmp_dir, 'whatswrong_tmp_tst')
         try:
-            path = os.path.join(tmp_dir, 'whatswrong_tmp_tst')
             f = file(path, 'w')
             f.write('#!/bin/sh\necho "test"')
             f.close()
@@ -27,6 +27,8 @@ def scan():
                 results.append(tmp_dir)
         except IOError, e:
             pass
+        if os.path.exists(path):
+            os.unlink(path)
 
     if results:
         return (scanner.FAIL, 'Executable files possible in tmp dirs: %s' % (', '.join(results)))
