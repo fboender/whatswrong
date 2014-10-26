@@ -81,6 +81,16 @@ class Output:
             )
             print line[:show_cols]
 
+    def tab(self):
+        '''
+        Output machine-readable (tab-seperated) format.
+        '''
+        inc_fields = ['status_title', 'status', 'impact', 'ident', 'severity',
+                      'cost_to_fix', 'msg']
+        print '\t'.join(inc_fields)
+        for result in self.results:
+            print '\t'.join([str(result[k]) for k in inc_fields])
+
     def json(self):
         '''
         Output results in JSON format.
