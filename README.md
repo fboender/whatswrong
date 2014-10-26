@@ -56,11 +56,18 @@ For each test, Whatswrong tells you:
 Usage
 -----
 
-    Usage: whatswrong.py [options] [scan pattern]
+Usage:
 
+    Usage: whatswrong.py [options] [scan pattern]
+   
     Options:
-      -h, --help   show this help message and exit
-      -d, --debug  Show debugging info
+     -h, --help            show this help message and exit
+     -d, --debug           Show debugging info
+     -s SHOW, --show=SHOW  Which results to show (default: err,fail)
+     -a, --show-all        Show all results
+     -o OUTPUT_TYPE, --output-type=OUTPUT_TYPE
+                           Output type (default: console, -o list for all
+                           available)
 
 Example:
 
