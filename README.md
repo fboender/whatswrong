@@ -15,7 +15,7 @@ available on most systems.
 
 Example output for the console:
 
-[fboender@host]~$ ./whatswrong.py -a
+    [fboender@host]~$ ./whatswrong.py -a
     Pass  Severity  Impact  CostToFix  Item                 Msg
     pass  3         1       1          web::powered_by      The webserver does not exposes backend software vi
     n/a   5         3       1          web::ssl::v2         Can't test for SSLv2: _ssl.c:475: The handshake op
