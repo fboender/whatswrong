@@ -7,7 +7,10 @@ __ident__ = 'php::display_errors'
 __severity__ = 5
 __impact__ = 4
 __cost_to_fix__ = 1
-__explanation__ = 'PHP is set to display errors.'
+__explanation__ = '''If PHP applications generate an error, the error message
+may be leaked to the end-user. This can expose private information such as
+database names, usernames and even passwords. PHP in production systems should
+not display errors, but log them instead.'''
 
 def scan():
     php_inis = [

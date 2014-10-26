@@ -7,7 +7,7 @@ __ident__ = 'web::ssl::v3'
 __severity__ = 5
 __impact__ = 3
 __cost_to_fix__ = 1
-__explanation__ = ''
+__explanation__ = '''SSL v3 is no longer secure and should not be enabled'''
 
 def scan():
     if not hasattr(ssl, 'PROTOCOL_SSLv3'):

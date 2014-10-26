@@ -6,7 +6,10 @@ __ident__ = 'sys::vm::agent'
 __severity__ = 2
 __impact__ = 3
 __cost_to_fix__ = 2
-__explanation__ = ''
+__explanation__ = '''Virtual systems should usually run a Virtual Machine agent
+that lets the host system communicate and control the virtual machine more
+efficiently. The absence of a VM agent may interfere with the system clock,
+memory ballooning, etc'''
 
 def scan():
     vm = False

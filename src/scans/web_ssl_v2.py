@@ -8,7 +8,7 @@ __severity__ = 5
 __impact__ = 3
 __cost_to_fix__ = 1
 __fail_msg__ = 'The webserver supports SSLv2, which is broken'
-__explanation__ = ''
+__explanation__ = '''SSL v2 is no longer secure and should not be enabled'''
 
 def scan():
     if not hasattr(ssl, 'PROTOCOL_SSLv2'):

@@ -6,7 +6,9 @@ __ident__ = 'sys::tmp::executable'
 __severity__ = 3
 __impact__ = 3
 __cost_to_fix__ = 4
-__explanation__ = ''
+__explanation__ = '''Many rootkits and automated exploits use the system's
+temporary dirs to execute programs that exploit your system. To prevent this,
+temp directories should not allow the execution of temp files.'''
 
 def scan():
     tmp_dirs = [

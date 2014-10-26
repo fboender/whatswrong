@@ -9,7 +9,9 @@ __ident__ = 'web::powered_by'
 __severity__ = 3
 __impact__ = 1
 __cost_to_fix__ = 1
-__explanation__ = ''
+__explanation__ = '''Automated malicious vulnerability scanners can pinpoint
+exploiits in software more easily if they know the specific version of the
+software that's running.'''
 
 def scan():
     connection = httplib.HTTPConnection("127.0.0.1")
