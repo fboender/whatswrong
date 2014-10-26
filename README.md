@@ -8,28 +8,49 @@ configurations, security problems, virtual machine problems, best-practices,
 etc. 
 
 It presents the user with a report that includes severity, impact to fix, cost
-to fix and an explanation of the problem. New scans can easily be added to the
+to fix and an explanation of the problem. Reports can be generated on the
+console, as CSV, as JSON or as HTML. New scans can easily be added to the
 system, and the scanner requires nothing by Python v2.6+, which should be
 available on most systems.
 
 Example output for the console:
 
-    [fboender@zoltar]~/src$ ./whatswrong.py 
+[fboender@host]~$ ./whatswrong.py -a
     Pass  Severity  Impact  CostToFix  Item                 Msg
-    pass  3         1       1          web::powered_by      The webserver does
-    pass  4         2       1          sys::ntpd            NTPd is running
-    n/a   5         3       1          web::ssl::v3         Can't test for SSL
-    pass  3         3       1          mysql::no_root_pw    The MySQL root acc
-    n/a   2         3       2          sys::vm::agent       This doesn't appea
-    pass  5         2       1          ssh::empty_passwords The SSH server doe
-    pass  4         4       1          ssh::root_login      SSH does not allow
-    err   5         4       1          php::display_errors  Scan error: [Errno
-    fail  3         3       4          sys::tmp::executable Executable files p
-    n/a   5         3       1          web::ssl::v2         Can't test for SSL
-    pass  3         1       1          web::server_banner   The webserver does
+    pass  3         1       1          web::powered_by      The webserver does not exposes backend software vi
+    n/a   5         3       1          web::ssl::v2         Can't test for SSLv2: _ssl.c:475: The handshake op
+    n/a   5         3       1          web::ssl::v3         Can't test for SSLv3: [Errno 1] _ssl.c:490: error:
+    pass  3         3       1          mysql::no_root_pw    The MySQL root account has a password
+    pass  2         3       2          sys::vm::agent       No vm agent is running
+    pass  3         3       1          mysql::listen        MySQL is not listening on all addresses
+    fail  4         4       1          ssh::root_login      SSH allows remote root logins
+    pass  5         4       1          php::display_errors  /etc/php5/apache2/php.ini does not have display_er
+    fail  3         3       4          sys::tmp::executable Executable files possible in tmp dirs: /tmp, /var/
+    fail  4         2       1          sys::ntpd            NTPd is not running
+    fail  2         1       5          sys::tmp::mount      /tmp is not mounted separately
+    pass  5         2       1          ssh::empty_passwords The SSH server does not allow empty passwords
+    fail  3         1       1          web::server_banner   The webserver exposes a header with version number
 
 For convenience' sake, the whole of Whatswrong can be downloaded as a single
 .zip file, which can immediately be run by Python.
+
+For each test, Whatswrong tells you:
+
+* **Pass**: Whether the test passed, failed, wasn't applicable (n/a) or if an error occurred.
+* **Severity**: How big of a problem this is, if the test failed. Ranges from 1
+  to 5, where 5 is very severe. The higher this number, the more important it
+  is to fix the problem.
+* **Impact**: The potential impact on the system and services if you were to
+  fix this problem. Ranges from 1 to 5, where 5 is a high potential impact and
+  very likely to break something on your system if fixed.
+* **CostToFix**: How much effort it would be to fix this problem. Ranges from 1
+  to 5 where 1 means it's very easy to fix this problem and 5 means it's quite
+  hard to fix this problem. This does **not** take in account the **impact**
+  field.
+* **Item**: A unique identifier for this scan. This can be used to select which
+  scans you'd like to run. For instance, if you only want to run all web scans,
+  specify `web::*`.
+* **Msg**: A textual representation of the output of the test.
 
 
 Usage
