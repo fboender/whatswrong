@@ -16,5 +16,5 @@ def scan():
     response = connection.getresponse()
     match = re.match('.*[0-9]+\..*', response.getheader('server', '').lower())
     if match:
-        return (scanner.FAIL, 'The webserver exposes a header with version number')
-    return (scanner.PASS, 'The webserver doesn\'t exposes a header with version number')
+        return scanner.Result(scanner.FAIL, 'The webserver exposes a header with version number')
+    return scanner.Result(scanner.PASS, 'The webserver doesn\'t exposes a header with version number')

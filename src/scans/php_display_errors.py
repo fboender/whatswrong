@@ -19,7 +19,7 @@ def scan():
     ]
 
     if not os.path.isdir('/etc/php5'):
-        return (scanner.NA, 'PHP not found')
+        return scanner.Result(scanner.NA, 'PHP not found')
 
     failed = []
     passed = []
@@ -37,6 +37,6 @@ def scan():
             passed.append('%s does not have display_errors on' % (php_ini))
 
     if failed:
-        return (scanner.FAIL, ', '.join(failed))
+        return scanner.Result(scanner.FAIL, ', '.join(failed))
     else:
-        return (scanner.PASS, ', '.join(passed))
+        return scanner.Result(scanner.PASS, ', '.join(passed))

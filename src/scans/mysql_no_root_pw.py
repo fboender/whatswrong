@@ -11,5 +11,5 @@ set. This is commonly a initial setup mistake.'''
 def scan():
     res = tools.cmd('mysql -u root -h 127.0.0.1')
     if 'access denied' in res['stderr'].lower():
-        return (scanner.PASS, 'The MySQL root account has a password')
-    return (scanner.FAIL, 'The MySQL root account has no password')
+        return scanner.Result(scanner.PASS, 'The MySQL root account has a password')
+    return scanner.Result(scanner.FAIL, 'The MySQL root account has no password')

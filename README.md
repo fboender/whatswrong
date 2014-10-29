@@ -17,19 +17,22 @@ Example output for the console:
 
     [fboender@host]~$ ./whatswrong.py -a
     Pass  Severity  Impact  CostToFix  Item                 Msg
-    pass  3         1       1          web::powered_by      The webserver does not exposes backend software vi
-    n/a   5         3       1          web::ssl::v2         Can't test for SSLv2: _ssl.c:475: The handshake op
-    n/a   5         3       1          web::ssl::v3         Can't test for SSLv3: [Errno 1] _ssl.c:490: error:
+    pass  3         1       1          web::powered_by      The webserver does not exposes backend
+    n/a   5         3       1          web::ssl::v2         Can't test for SSLv2: _ssl.c:475: The 
+    n/a   5         3       1          web::ssl::v3         Can't test for SSLv3: [Errno 1] _ssl.c
     pass  3         3       1          mysql::no_root_pw    The MySQL root account has a password
     pass  2         3       2          sys::vm::agent       No vm agent is running
-    pass  3         3       1          mysql::listen        MySQL is not listening on all addresses
+    pass  3         3       1          mysql::listen        MySQL is not listening on all addresse
     fail  4         4       1          ssh::root_login      SSH allows remote root logins
-    pass  5         4       1          php::display_errors  /etc/php5/apache2/php.ini does not have display_er
-    fail  3         3       4          sys::tmp::executable Executable files possible in tmp dirs: /tmp, /var/
+    pass  5         4       1          php::display_errors  /etc/php5/apache2/php.ini does not hav
+    fail  3         3       4          sys::tmp::executable Executable files possible in: /tmp
+    fail  3         3       4          sys::tmp::executable Executable files possible in: /var/tmp
     fail  4         2       1          sys::ntpd            NTPd is not running
     fail  2         1       5          sys::tmp::mount      /tmp is not mounted separately
-    pass  5         2       1          ssh::empty_passwords The SSH server does not allow empty passwords
-    fail  3         1       1          web::server_banner   The webserver exposes a header with version number
+    fail  2         1       5          sys::tmp::mount      /var/tmp is not mounted separately
+    pass  5         2       1          ssh::empty_passwords The SSH server does not allow empty pa
+    fail  3         1       1          web::server_banner   The webserver exposes a header with ve
+
 
 For convenience' sake, the whole of Whatswrong can be downloaded as a single
 .zip file, which can immediately be run by Python.
@@ -96,23 +99,29 @@ Adding new scans is simple. Take a look at some of the other scans in the
         res = 'FAIL'
 
         if res == 'FAIL':
-            return (scanner.FAIL, 'The test failed: something is wrong')
+            return scanner.Result(scanner.FAIL, 'The test failed: something is wrong')
         elif res == 'PASS':
-            return (scanner.PASS, 'The test passed: everything is okay')
+            return scanner.Result(scanner.PASS, 'The test passed: everything is okay')
         elif res == 'ERROR_1':
-            return (scanner.ERROR, 'An unexpected error occurred during the scan')
+            return scanner.Result(scanner.ERROR, 'An unexpected error occurred during the scan')
         elif res == 'ERROR_2':
             raise scanner.ScanError('An unexpected error occurred during the scan')
         elif res == 'NOT APPLICABLE':
-            return (scanner.NA, 'The test did not run on purpose')
+            return scanner.Result(scanner.NA, 'The test did not run on purpose')
         else:
             retrun (scanner.UNKNOWN, 'Shouldn\'t be reached')
 
 Put the file in the `scans/` directory, and Whatswrong will automatically detect it.
 
-Scanners should return an iterable (tuple, list) with two elements:
+Scanners should return an instance of the scanner.Result() class: 
+    
+    return scanner.Result(STATUS_CODE, MESSAGE)
 
-    (STATUS_CODE, MESSAGE)
+Multiple results may be returned using the scanner.Result.ad() method:
+
+    result = scanner.Result()
+    result.add(scanner.FAIL, 'The first failure')
+    result.add(scanner.FAIL, 'The second failure')
 
 The following status codes are available:
 

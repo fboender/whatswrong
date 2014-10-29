@@ -16,7 +16,7 @@ def scan():
         '/var/tmp',
     ]
 
-    results = []
+    result = scanner.Result()
     for tmp_dir in tmp_dirs:
         path = os.path.join(tmp_dir, 'whatswrong_tmp_tst')
         try:
@@ -26,14 +26,13 @@ def scan():
             os.chmod(path, 0755)
             res = tools.cmd(path)
             if 'test' in res['stdout']:
-                results.append(tmp_dir)
+                result.add(scanner.FAIL, 'Executable files possible in: %s' % tmp_dir)
         except IOError, e:
             pass
         if os.path.exists(path):
             os.unlink(path)
 
-    if results:
-        return (scanner.FAIL, 'Executable files possible in tmp dirs: %s' % (', '.join(results)))
+    if result:
+        return result
     else:
-        return (scanner.PASS, 'No executables possible in tmp dirs')
-
+        return scanner.Result(scanner.PASS, 'No executables possible in tmp dirs')

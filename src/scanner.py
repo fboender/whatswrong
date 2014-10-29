@@ -11,6 +11,25 @@ ERROR = 3
 NA = 4
 UNKNOWN = 5
 
+class Result:
+    def __init__(self, status=None, msg=None):
+        self.results = []
+        if status:
+            self.results.append( (status, msg) )
+
+    def add(self, status, msg):
+        self.results.append( (status, msg) )
+
+    def __nonzero__(self):
+        if self.results:
+            return True
+        else:
+            return False
+
+    def __iter__(self):
+        for result in self.results:
+            yield result
+
 class ScanError(Exception):
     pass
 
@@ -25,39 +44,41 @@ class Scanner:
         results = []
         for scan in self.scans.keys():
             if re.match(scan_pattern, scan):
-                results.append(self.run(scan))
+                for result in self.run_scan(scan):
+                    results.append(result)
         return results
 
-    def run(self, ident):
+    def run_scan(self, ident):
         try:
             scan = self.scans[ident]
+            callback = scan['_module'].scan
         except KeyError:
             raise ScanError("Unknown scan: %s" % (ident))
 
-        callback = scan['_module'].scan
-        result = {
-            'status': UNKNOWN,
-        }
-        result.update(scan)
+        scan_results = []
         try:
-            res = callback()
-            if not res or len(res) != 2:
-                raise ScanError("Invalid results received from scanner: %s" % (ident))
-            scan_result, msg = res
-            result['status'] = scan_result
-            result['msg'] = msg
-        except ScanError, e:
-            result['status'] = ERROR
-            result['msg'] = 'Scan error: %s' % (str(e))
-            if self.debug:
-                traceback.print_exc()
+            r = callback()
+            if not isinstance(r, Result):
+                raise Exception('Scanner returned invalid results')
+            for result_status, result_msg in r:
+                result = {
+                    'status': result_status,
+                    'msg': result_msg
+                }
+                result.update(scan)
+                scan_results.append(result)
         except Exception, e:
-            result['status'] = ERROR
-            result['msg'] = 'Scan error: %s' % (str(e))
+            result = {
+                'status': ERROR,
+                'msg': 'Scan error: %s' % (str(e))
+            }
+            result.update(scan)
+            scan_results.append(result)
             if self.debug:
                 traceback.print_exc()
 
-        return result
+        return scan_results
+
 
 class ScannerSrc(Scanner):
     def __init__(self, dir, debug=False):

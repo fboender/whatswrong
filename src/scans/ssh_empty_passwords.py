@@ -13,6 +13,6 @@ def scan():
     fc = file('/etc/ssh/sshd_config', 'r').read().lower()
     matches = re.findall('.*permitemptypasswords.*', fc)
     if matches and matches[0].endswith('yes'):
-        return (scanner.FAIL, 'The SSH server allows empty passwords')
+        return scanner.Result(scanner.FAIL, 'The SSH server allows empty passwords')
     else:
-        return (scanner.PASS, 'The SSH server does not allow empty passwords')
+        return scanner.Result(scanner.PASS, 'The SSH server does not allow empty passwords')

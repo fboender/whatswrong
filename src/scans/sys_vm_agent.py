@@ -27,7 +27,7 @@ def scan():
         if match:
             res_pidof = tools.cmd('pidof %s' % (agent_proc))
             if res_pidof['exitcode'] != 0:
-                return (scanner.PASS, 'A vm agent is running')
+                return scanner.Result(scanner.PASS, 'A vm agent is running')
             else:
-                return (scanner.PASS, 'No vm agent is running')
-    return (scanner.NA, 'This doesn\'t appear to be a vm')
+                return scanner.Result(scanner.PASS, 'No vm agent is running')
+    return scanner.Result(scanner.NA, 'This doesn\'t appear to be a vm')

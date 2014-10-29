@@ -18,6 +18,6 @@ def scan():
 
         if line.startswith('bind-address') and \
            line.strip().endswith('0.0.0.0'):
-            return (scanner.FAIL, 'MySQL is listening on all addresses')
+            return scanner.Result(scanner.FAIL, 'MySQL is listening on all addresses')
 
-    return (scanner.PASS, 'MySQL is not listening on all addresses')
+    return scanner.Result(scanner.PASS, 'MySQL is not listening on all addresses')

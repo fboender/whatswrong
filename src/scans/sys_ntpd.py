@@ -12,6 +12,6 @@ __explanation__ = '''NTPd is a daemon that keeps the system time ''' \
 def scan():
     res = tools.cmd('pidof ntpd')
     if res['exitcode'] != 0:
-        return (scanner.FAIL, 'NTPd is not running')
+        return scanner.Result(scanner.FAIL, 'NTPd is not running')
     else:
-        return (scanner.PASS, 'NTPd is running')
+        return scanner.Result(scanner.PASS, 'NTPd is running')
