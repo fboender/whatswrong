@@ -1,0 +1,51 @@
+Todos
+=====
+
+Output
+------
+
+- Better HTML output
+- PDF output
+- Ability to mail reports
+- Profile support
+    - User should be able to generate a profile.
+    - The user can edit the profile to leave out tests, change scan details
+      (Severity, etc)
+
+Scans
+-----
+
+### Firewall
+
+- Check if the firewall is enabled
+- Check if the firewall default IN policy is DENY
+- Check if the firewall only allows incoming traffic to normal ports (22, 25,
+  80, 443, etc)
+
+### Hostnames
+
+- Check that all configured vhosts / hostnames are listed in /etc/hosts
+- Check that the systems hostname corresponds to what the external DNS server
+  thinks the machine is called.
+
+### Email
+
+- Check that root email is delivered (for cron output)
+- Check that all cron email is delivered
+- Check for old email in /var/spool/mail
+
+### Updates
+
+- Check that the system is running an OS that is still maintained.
+- Check that unattended upgrades are configured and email is delivered.
+
+### Security
+
+- Check that fail2ban is installed and running
+
+### Services
+
+- Check that MySQL doesn't listen on extern IPs
+- Check that MySQL has strict mode enabled
+- Check that MySQL has seperate ibdata files per table.
+

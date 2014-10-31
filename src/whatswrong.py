@@ -1,17 +1,5 @@
 #!/usr/bin/python
 
-#
-# TODO:
-#  - Firewall: enabled, incoming, outgoing
-#  - Kernel: dangerous options enabled
-#  - SSL: v2 / v3 enabled: Needs fixing
-#  - Sys: tmp dirs executable
-#  - All ips / hostnames in /etc/hosts
-#  - ROot email delivered
-#  - Cron email delivered
-#  - fail2ban
-#  - MySQL: listen port, users
-
 import sys
 import optparse
 import zipfile
