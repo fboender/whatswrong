@@ -44,8 +44,12 @@ class Scanner:
         results = []
         for scan in self.scans.keys():
             if re.match(scan_pattern, scan):
+                if self.debug:
+                    print "Running scan: %s" % (scan)
                 for result in self.run_scan(scan):
                     results.append(result)
+            else:
+                print "Skipping scan: %s" % (scan)
         return results
 
     def run_scan(self, ident):
