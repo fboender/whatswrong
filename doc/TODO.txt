@@ -49,3 +49,6 @@ Scans
 - Check that MySQL has strict mode enabled
 - Check that MySQL has seperate ibdata files per table.
 
+## System
+
+- Proper umasks for all users.
