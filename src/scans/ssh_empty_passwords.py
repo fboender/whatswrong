@@ -5,9 +5,10 @@ __ident__ = 'ssh::empty_passwords'
 __severity__ = 5
 __impact__ = 2
 __cost_to_fix__ = 1
-__explanation__ = '''Empty passwords are dangerous, since attackers can gain
-entry to the system without any effort. Use passwordless private keys
-instead'''
+__explanation__ = '''The SSH server allows empty passwords
+(permitemptypasswords in /etc/ssh/sshd_config). Empty passwords are dangerous,
+since attackers can gain entry to the system without any effort. Use
+passwordless private keys instead'''
 
 def scan():
     fc = file('/etc/ssh/sshd_config', 'r').read().lower()
