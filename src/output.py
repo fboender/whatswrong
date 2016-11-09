@@ -19,7 +19,7 @@ output_map = {
     },
     scanner.ERROR: {
         'title': 'err',
-        'color_console': '\033[93m',
+        'color_console': '\033[95m',
         'color_rgb': '#FFFF40',
     },
     scanner.UNKNOWN: {
